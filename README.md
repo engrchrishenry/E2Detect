@@ -71,7 +71,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
       --out_dir output/reds_for_esim/train/ \
       --fps 120 \
       --resize \
-      --img_size 320:180 \
+      --img_size 533:300 \
       --cores -1
    
    # Prepare valdation data for inputting to ESIM
@@ -79,7 +79,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
       --out_dir output/reds_for_esim/val/ \
       --fps 120 \
       --resize \
-      --img_size 320:180 \
+      --img_size 533:300 \
       --cores -1
    ```
 
@@ -89,18 +89,55 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
   ```bash
    # Generate training synthetic events
-  python esim_torch/scripts/generate_events.py --input_dir=output/reds_for_esim/train/ \
-    --output_dir=output/reds_events/train/ \
+  python esim_torch/scripts/generate_events.py --input_dir=<reds_for_esim_train_path> \
+    --output_dir=<events_output_path> \
     --contrast_threshold_neg=0.2 \
     --contrast_threshold_pos=0.2 \
     --refractory_period_ns=0
    
    # Generate valdation synthetic events
-   python esim_torch/scripts/generate_events.py --input_dir=output/reds_for_esim/val/ \
-    --output_dir=output/reds_events/val/ \
+   python esim_torch/scripts/generate_events.py --input_dir=<reds_for_esim_val_path> \
+    --output_dir=<events_output_path> \
     --contrast_threshold_neg=0.2 \
     --contrast_threshold_pos=0.2 \
     --refractory_period_ns=0
   ```
 
+- Event voxel generation
+
+  ```bash
+  # Voxel generation for training data
+  python prep_data_esim_fast.py --events_dir <synthetic_train_events_path> \
+    --upsamp_frames_dir <reds_for_esim_train_path> \
+    --out_dir <output_path>
+
+   # Voxel generation for validation data
+   python prep_data_esim_fast.py --events_dir <synthetic_validation_events_path> \
+    --upsamp_frames_dir <reds_for_esim_validation_path> \
+    --out_dir <output_path>
+  ```
   
+  Usage:
+
+  ```bash
+  options:
+   -h, --help            show this help message and exit
+   --events_dir EVENTS_DIR
+                           Path to directory containing ESIM-generated synthetic events
+   --upsamp_frames_dir UPSAMP_FRAMES_DIR
+                           Path to directory containing upsampled frames
+   --out_dir OUT_DIR     Path to output directory
+   --bins BINS           Number of bins for event voxel generation
+   --dur_sec DUR_SEC     Event window duration in seconds
+   --res RES             Event camera resolution (e.g., '533:300')
+   --events_th_low EVENTS_TH_LOW
+                           Lower threshold for limiting the number of events within an event window. None to ignore.
+   --events_th_high EVENTS_TH_HIGH
+                           Upper threshold for limiting the number of events within an event window. None to ignore.
+   --kp_th KP_TH         Keypoint threshold for rejecting blank frames. None to ignore.
+   --sd_th SD_TH         Standard deviation threshold. None to ignore.
+   --range_th RANGE_TH   Range (max value - min value) threshold. None to ignore.
+   --th_hist TH_HIST     Clipping threshold for histogram plotting. Value between 0 and 100, e.g., 99.9 means clipping at 99.9 percentile.
+   --plot                Save plots.
+   --cores CORES         Number of cores to use. -1 -> use all cores.
+  ```

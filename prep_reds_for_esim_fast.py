@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--resize', action='store_true',
                         help='Resize frames')
     parser.add_argument('--img_size', type=str,
-                        help="Target resolution (e.g., '320:180'). REDS 120fps dataset is 720p 16:9 so choose the target size accordingly.")
+                        help="Target resolution (e.g., '533:300'). REDS 120fps dataset is 720p 16:9 so choose the target size accordingly.")
     parser.add_argument("--cores", type=int, default=-1,
                         help="Number of cores to use to process the data. Default: -1 -> Uses all cores.")
 

@@ -1,0 +1,10 @@
+python esim_torch/scripts/generate_events.py --input_dir=/storage4tb/PycharmProjects/GitHub/E2Detect/output/reds_for_esim/train \
+    --output_dir=/storage4tb/PycharmProjects/GitHub/E2Detect/output/reds_events/train/ \
+    --contrast_threshold_neg=0.2 \
+    --contrast_threshold_pos=0.2 \
+    --refractory_period_ns=0
+
+
+python prep_data_esim_fast.py --events_dir output/reds_events/train/ \
+    --upsamp_frames_dir output/reds_for_esim/train \
+    --out_dir output/reds_voxels/train
