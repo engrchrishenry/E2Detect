@@ -87,8 +87,6 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
   
   Follow the instructions [here](https://github.com/uzh-rpg/rpg_vid2e/tree/master) to setup ESIM and build the python binding with GPU support. Use a different conda environment with the exact versions of the dependencies reqired to run ESIM with GPU support. Once ESIM is setup:
 
-  Generate synthetic events via [generate_events.py](https://github.com/uzh-rpg/rpg_vid2e/blob/master/esim_torch/scripts/generate_events.py).
-
   ```bash
    # Generate training synthetic events
   python esim_torch/scripts/generate_events.py --input_dir=output/reds_for_esim/train/ \
