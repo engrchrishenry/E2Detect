@@ -8,6 +8,7 @@ import shutil
 from joblib import Parallel, delayed
 from tqdm import tqdm
 import matplotlib
+import multiprocessing
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -188,7 +189,7 @@ if __name__ == "__main__":
     events_th_high = args.events_th_high
     th_hist = args.th_hist
     plot = args.plot
-    cores = args.cores
+    cores = multiprocessing.cpu_count() if args.cores == -1 else args.cores
 
     out_name = f'{bins}_{dur_sec}_{kp_th}_{events_th_low}_{events_th_high}'
     out_dir = f'{out_dir}/{out_name}'

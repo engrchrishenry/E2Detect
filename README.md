@@ -141,3 +141,21 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
    --plot                Save plots.
    --cores CORES         Number of cores to use. -1 -> use all cores.
   ```
+
+ - Generate final patches
+  
+   ```bash
+   # Generate patches for training
+   python gen_patches_fast.py --base_path <train_voxels_path> \
+      --out_path <output_train_patches_path> \
+      --ip_size 533:300 \
+      --patch_size 300:300 \
+      --cores -1
+      
+   # Generate patches for validation
+   python gen_patches_fast.py --base_path <validation_voxels_path> \
+      --out_path <output_validation_patches_path> \
+      --ip_size 533:300 \
+      --patch_size 300:300 \
+      --cores -1
+   ```
