@@ -50,7 +50,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 - Download REDS 120 FPS via the download links provided in [reds_120fps_links.txt]()
     ```bash
-    wget -i reds_120fps_links.txt -P REDS_120fps
+    wget -i reds_120fps_links.txt -P REDS_120fps/
     ```
 
 - Unzip files
