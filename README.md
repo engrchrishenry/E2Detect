@@ -65,7 +65,6 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 - [Optional] Delete the .zip files to save storage space.
   ```bash
-  # Delete train sequences
   rm REDS_120fps/*.zip
   ```
 
