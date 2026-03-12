@@ -36,7 +36,7 @@ def process_file(vox_path, im_path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate patches from event voxels for training/testing.')
+    parser = argparse.ArgumentParser(description='Generate patches from event voxels for training/testin via using multiple cores.')
     parser.add_argument('--base_path', type=str, required=True,
                         help='Base path for input data (should contain subfolders: vox, images)')
     parser.add_argument('--out_path', type=str, required=True,

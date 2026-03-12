@@ -1,4 +1,4 @@
-# E2Detect
+# E2Detect: Object Detection from Event Camera via Sparse Feature Pyramid Recovery
 This is the official pytorch implementation of the upcoming IEEE ISCAS 2026 paper titled "[E2Detect: Object Detection from Event Camera via Sparse Feature Pyramid Recovery]()".
 
 <br>
