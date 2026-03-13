@@ -15,7 +15,6 @@ def process_file(vox_path, im_path):
     f_name = os.path.basename(vox_path)
     f_name, _ = os.path.splitext(f_name)
 
-    # ========== VOX ==========
     vox = np.load(vox_path)['arr_0']
     c = 0
     for i in range(0, im_h - patch_h + 1, step_h):
@@ -24,7 +23,6 @@ def process_file(vox_path, im_path):
             patch = vox[:, i:i+patch_h, j:j+patch_w]
             np.savez_compressed(f'{out_path}/vox/{f_name}_{c}', patch)
 
-    # ========== IMAGE ==========
     im = Image.open(im_path)
     im = np.array(im)
     c = 0
