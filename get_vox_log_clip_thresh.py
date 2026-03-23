@@ -6,9 +6,9 @@ import scipy.io
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate a histogram for event voxels or LoG pyramids. Useful for setting clipping threshold for event voxels and LoG pyramids during training TSFNet_E2SIFT')
+    parser = argparse.ArgumentParser(description='Generate a histogram for event voxels or SSD backbone features. Useful for setting clipping threshold for event voxels or SSD backbone features during training E-FPN.')
     parser.add_argument('--data_path', type=str, required=True,
-                        help='Path to the directory containing events voxels or log pyramids')
+                        help='Path to the directory containing events voxels or SSD backbone features')
     parser.add_argument('--save_file', type=str, required=True,
                         help='Path to the output file (including filename with extension, e.g., output/hists/vox_hist.png)')
     parser.add_argument('--samp_percent', type=int, default=5,
@@ -27,10 +27,7 @@ if __name__ == "__main__":
 
     all_samples = []
     for i, fname in enumerate(sorted(os.listdir(data_path))):
-        if fname.endswith(".npz"):
-            arr = np.load(os.path.join(data_path, fname))['arr_0']
-        if fname.endswith(".mat"):
-            arr = scipy.io.loadmat(os.path.join(data_path, fname))['x']
+        arr = np.load(os.path.join(data_path, fname))['arr_0']
             
         arr = arr.reshape(-1)
 

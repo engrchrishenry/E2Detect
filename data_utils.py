@@ -1,114 +1,9 @@
 import torch
-import torchvision
-import torchvision.transforms as transforms
+# import torchvision
 import torch.utils.data
 import numpy as np
-from PIL import Image, ImageOps
 import os
 import glob
-# from utils.event_readers import FixedSizeEventReader, FixedDurationEventReader, myFixedDurationEventReader
-# from utils.inference_utils import events_to_voxel_grid, events_to_voxel_grid_pytorch, CropParameters
-import matplotlib.pyplot as plt
-# import pysift
-import cv2
-from scipy.io import loadmat
-
-
-def events_to_voxel_grid(events, num_bins, width, height):
-    """
-    Build a voxel grid with bilinear interpolation in the time domain from a set of events.
-
-    :param events: a [N x 4] NumPy array containing one event per row in the form: [timestamp, x, y, polarity]
-    :param num_bins: number of bins in the temporal axis of the voxel grid
-    :param width, height: dimensions of the voxel grid
-    """
-
-    assert(events.shape[1] == 4)
-    assert(num_bins > 0)
-    assert(width > 0)
-    assert(height > 0)
-
-    voxel_grid = np.zeros((num_bins, height, width), np.float32).ravel()
-
-    # normalize the event timestamps so that they lie between 0 and num_bins
-    last_stamp = events[-1, 0]
-    first_stamp = events[0, 0]
-    deltaT = last_stamp - first_stamp
-
-    if deltaT == 0:
-        deltaT = 1.0
-
-    events[:, 0] = (num_bins - 1) * (events[:, 0] - first_stamp) / deltaT
-    ts = events[:, 0]
-    xs = events[:, 1].astype(np.int32)
-    ys = events[:, 2].astype(np.int32)
-    pols = events[:, 3]
-    pols[pols == 0] = -1  # polarity should be +1 / -1
-    
-    tis = ts.astype(np.int32)
-    dts = ts - tis
-    vals_left = pols * (1.0 - dts)
-    vals_right = pols * dts
-
-    valid_indices = tis < num_bins
-    np.add.at(voxel_grid, xs[valid_indices] + ys[valid_indices] * width
-              + tis[valid_indices] * width * height, vals_left[valid_indices])
-
-    valid_indices = (tis + 1) < num_bins
-    np.add.at(voxel_grid, xs[valid_indices] + ys[valid_indices] * width
-              + (tis[valid_indices] + 1) * width * height, vals_right[valid_indices])
-
-    voxel_grid = np.reshape(voxel_grid, (num_bins, height, width))
-
-    return voxel_grid
-
-
-def myFixedDurationEventReader(event_df, end_time=50.0, start_time=0.0):    
-    filtered_df = event_df[(event_df['t'] >= start_time) & (event_df['t'] <= end_time)]
-    event_window = np.array(filtered_df.values)
-    return event_window
-
-
-def get_duration_s(file_path, start_frame, num_of_frames=2):
-    f = open(file_path, 'r')
-    lines = f.readlines()
-    
-    prev_time = None
-    durations_s = []
-    durations_ms = []
-    for i in range(start_frame, len(lines), num_of_frames): # starts with 1 to skip 1 line in events.txt file
-        line = lines[i].replace('\n', '')
-        time, im_name = line.split(' ')
-        time = float(time)
-        if prev_time == None:
-            prev_time = time
-            continue
-        duration_s = time - prev_time
-        durations_s.append([duration_s, prev_time, time, im_name])#*1000)
-        durations_ms.append([duration_s*1e+6, prev_time*1e+6, time*1e+6, im_name])
-        prev_time = time
-    return durations_s # , durations_ms # durations_s/durations_ms gives [duration, start_time, end_time, im_name]]
-
-
-def get_duration_thu_sevi(file_path, start_frame, num_of_frames=2):
-    f = open(file_path, 'r')
-    lines = f.readlines()
-    
-    prev_time = None
-    durations_s = []
-    durations_ms = []
-    for i in range(start_frame, len(lines), num_of_frames): # starts with 1 to skip 1 line in events.txt file
-        line = lines[i].replace('\n', '')
-        time = float(line)
-        if prev_time == None:
-            prev_time = time
-            continue
-        duration_ms = time - prev_time
-        im_name = f'{i}.jpg'
-        durations_s.append([duration_ms/1e+6, prev_time/1e+6, time/1e+6, im_name])#*1000)
-        durations_ms.append([duration_ms, prev_time, time, im_name])
-        prev_time = time
-    return durations_s, durations_ms #  # durations_s/durations_ms gives [duration, start_time, end_time, im_name]]
 
 
 def norm_vox_log(arr, clip_min, clip_max, activation):
@@ -145,23 +40,22 @@ def recon_norm_log(arr, clip_min, clip_max):
     return arr * (clip_max - clip_min) + clip_min
 
 
-class Event_Camera_Dataset_LoG(torch.utils.data.Dataset):
-    def __init__(self, vox_path, log_path, mode, clip_vox, clip_log, activation):
+class Event_to_SSDFeature_Dataset(torch.utils.data.Dataset):
+    def __init__(self, vox_path, ssd_feat_path, clip_vox, clip_ssd_feat, activation):
         # self.vox_paths = sorted(glob.glob(f'{vox_path}/*.npz', recursive=True))
-        # self.log_paths = sorted(glob.glob(f'{log_path}/*.mat', recursive=True))
+        # self.ssd_feat_paths = sorted(glob.glob(f'{ssd_feat_path}/*.npz', recursive=True))
         self.vox_paths = sorted(
             file
             for path in vox_path
             for file in glob.glob(os.path.join(path, "*.npz"), recursive=True)
         )
-        self.log_paths = sorted(
+        self.ssd_feat_paths = sorted(
             file
-            for path in log_path
-            for file in glob.glob(os.path.join(path, "*.mat"), recursive=True)
+            for path in ssd_feat_path
+            for file in glob.glob(os.path.join(path, "*.npz"), recursive=True)
         )
-        self.mode = mode
         self.clip_min_vox, self.clip_max_vox = clip_vox[0], clip_vox[1]
-        self.clip_min_log, self.clip_max_log = clip_log[0], clip_log[1]
+        self.clip_min_ssd_feat, self.clip_max_ssd_feat = clip_ssd_feat[0], clip_ssd_feat[1]
         self.activation = activation
 
     def __len__(self):
@@ -169,80 +63,31 @@ class Event_Camera_Dataset_LoG(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         vox_path = self.vox_paths[idx]
-        log_path = self.log_paths[idx]
-        name = os.path.basename(log_path)
-        name, ext = os.path.splitext(name)
+        ssd_feat_path = self.ssd_feat_paths[idx]
+        name = os.path.basename(ssd_feat_path)
+        name, ext = os.path.splitext(name) 
         
-        vox = np.load(vox_path)['arr_0']
-        mat_data = loadmat(log_path)
-        log_0, log_1, log_2, log_3 = mat_data['log_pyramid']
+        vox = np.load(vox_path)['patch']
+        ssd_feat = np.load(ssd_feat_path)['backbone_feature']
 
         vox = norm_vox_e2vid(torch.from_numpy(vox))
         vox = vox.cpu().numpy()
         _, vox = norm_vox_log(vox, self.clip_min_vox, self.clip_max_vox, self.activation)
-        _, log_0 = norm_vox_log(log_0, self.clip_min_log, self.clip_max_log, self.activation)
-        _, log_1 = norm_vox_log(log_1, self.clip_min_log, self.clip_max_log, self.activation)
-        _, log_2 = norm_vox_log(log_2, self.clip_min_log, self.clip_max_log, self.activation)
-        _, log_3 = norm_vox_log(log_3, self.clip_min_log, self.clip_max_log, self.activation)
+        if self.clip_min_ssd_feat is not None and self.clip_max_ssd_feat is not None:
+            ssd_feat = np.clip(ssd_feat, a_min=self.clip_min_ssd_feat, a_max=self.clip_max_ssd_feat)
+        vox = torch.from_numpy(vox).float()
+        ssd_feat = torch.from_numpy(ssd_feat).float()
 
-        if self.mode == 'train':
-            crop_shape = (5, 160, 160)
-            height_start = 0
-            width_start = 0
-            max_height_start = vox.shape[1] - crop_shape[1]
-            max_width_start = vox.shape[2] - crop_shape[2]
-            height_start = np.random.randint(0, max_height_start + 1)
-            width_start = np.random.randint(0, max_width_start + 1)
-            vox = vox[:, height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            vox = torch.from_numpy(vox).float()
-        if self.mode == 'valid':
-            crop_shape = (5, 160, 160)
-            height_start = (vox.shape[1] - crop_shape[1]) // 2
-            width_start = (vox.shape[2] - crop_shape[2]) // 2
-            vox = vox[:, height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            vox = torch.from_numpy(vox).float()
-        
-        if self.mode == 'train':
-            log_0 = log_0[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_1 = log_1[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_2 = log_2[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_3 = log_3[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-
-        if self.mode == 'valid':
-            log_0 = log_0[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_1 = log_1[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_2 = log_2[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-            log_3 = log_3[height_start:height_start + crop_shape[1], width_start:width_start + crop_shape[2]]
-
-        log_0 = torch.from_numpy(log_0).float().unsqueeze(dim=0)
-        log_1 = torch.from_numpy(log_1).float().unsqueeze(dim=0)
-        log_2 = torch.from_numpy(log_2).float().unsqueeze(dim=0)
-        log_3 = torch.from_numpy(log_3).float().unsqueeze(dim=0)
-        
-        logs = np.concatenate((log_0, log_1, log_2, log_3), axis=0)
-
-        return vox, logs, name
-
-
-def npy_loader(path):
-    sample = torch.from_numpy(np.load(path)).float()
-    # sample = sample[0:12, :, :]
-    return sample
+        return vox, ssd_feat, name
 
 
 if __name__ == "__main__":
-    vox_path = '/storage4tb/PycharmProjects/rpg_e2vid/output/updated/esim_reds_filtered_patched/train/5_0.55_0.005_50_100000_400000/vox'
-    ssd_feat_path = '/storage/result_ssd300_5ms/train/feat'
-    # print (vox.shape)
-    # vox = vox[:1,:,:]
-    # plt.imshow(vox[0], cmap='gray')
-    # plt.savefig('x.png')
-    # print (vox)
+    vox_path = 'path_to_voxels_dir'
+    feat_path = 'path_to_feats_dir'
 
-    train_data_load = Event_Camera_Dataset_SSD(vox_path, ssd_feat_path, clip_vox=[-1, 1], clip_ssd_feat=[-1, 1], activation='sigmoid')
+    train_data_load = Event_to_SSDFeature_Dataset(vox_path, feat_path, clip_vox=[-1, 1], clip_ssd_feat=[-1, 1], activation='sigmoid')
     training_loader = torch.utils.data.DataLoader(train_data_load, batch_size=2, shuffle=False, num_workers=2)
-    for vox, im, name in training_loader:
-        print (vox.shape, im.shape, name)
-        
+    for vox, feat, name in training_loader:
+        print (vox.shape, feat.shape, name)
         exit(0)
-    # print (cifar100_training_loader)
+

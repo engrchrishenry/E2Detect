@@ -9,6 +9,12 @@ This is the official pytorch implementation of the upcoming IEEE ISCAS 2026 pape
   Overall pipeline for the proposed E2Detect system.
 </div>
 
+<p align="center">
+  <img src="figures/e2detect_predictions.jpg" alt="E2Detect Predictions" width="590"/>
+  <br>
+  Detections by E2Detect (ours) using event voxel and detections via passing RGB image through pretrained <a href="https://arxiv.org/abs/1512.02325">SSD</a>.
+</div>
+
 <br>
 
 
@@ -163,6 +169,34 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     ```
 
 ### Generate Ground Truth SSD Bottleneck Features
+- Download pretrained weights
+  ```bash
+  # Download pretrained weights for VGG16 backbone
+  wget https://s3.amazonaws.com/amdegroot-models/vgg16_reducedfc.pth -P weights/
+
+  # Download pretrained weights for SSD300 trained on PASCAL VOC dataset
+  wget https://github.com/lufficc/SSD/releases/download/1.2/vgg_ssd300_voc0712.pth -P weights/
+  ```
+
+- Generate ground truth SSD backbone features for training/validating the proposed E-FPN
+  ```bash
+  # For training data
+  python get_gt_feat.py --config configs/SSD_config.yaml \
+    --ckpt weights/vgg_ssd300_voc0712.pth \
+    --images_dir <train_image_path> \
+    --output_dir <train_gt_feat_output_path>
+  
+  # For validation data
+  python get_gt_feat.py --config configs/SSD_config.yaml \
+    --ckpt weights/vgg_ssd300_voc0712.pth \
+    --images_dir <validation_image_path> \
+    --output_dir <validation_gt_feat_output_path>
+  ```
+
+> Note: The download links for the weights and the code for SSD were taken from [Luffic's SSD repository](https://github.com/lufficc/SSD?tab=readme-ov-file), which is licensed under the MIT License. 
+
+
+## Training Event Feature Pyramid Network (E-FPN)
 
 
 
