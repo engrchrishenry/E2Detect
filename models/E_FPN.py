@@ -45,8 +45,8 @@ def rearrange_v2(img_dct):
 
 
 def dct_and_rearrange(in_pix, dct_min, dct_max):
-    dct_min = dct_min.cuda()
-    dct_max = dct_max.cuda()
+    dct_min = dct_min.to(in_pix.device)
+    dct_max = dct_max.to(in_pix.device)
     b, c, h_inp, w_inp = in_pix.shape
     n_blocks = (h_inp // 4) * (w_inp // 4)
     x_pix_2 = torch.zeros_like(in_pix)
@@ -111,8 +111,8 @@ class E_FPN(nn.Module):
         kernel_size = 3
         n_basicblock = 10
 
-        self.dct_min = torch.from_numpy(np.load(dct_min_path)).float()
-        self.dct_max = torch.from_numpy(np.load(dct_max_path)).float()
+        self.register_buffer('dct_min', torch.from_numpy(np.load(dct_min_path)).float())
+        self.register_buffer('dct_max', torch.from_numpy(np.load(dct_max_path)).float())
 
         # define head module for pixel input
         self.head_pix = nn.Sequential(

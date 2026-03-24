@@ -196,9 +196,34 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 > Note: The download links for the weights and the code for SSD were taken from [Luffic's SSD repository](https://github.com/lufficc/SSD?tab=readme-ov-file), which is licensed under the MIT License. 
 
 
-## Training Event Feature Pyramid Network (E-FPN)
+## Event Feature Pyramid Network (E-FPN) (Training/Testing)
 
+- ### Training
+  To train using [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) and using the same parameters as in E2Detect paper, run the following:
 
+    ```bash
+    python train_E_FPN.py --vox_path <train_event_voxels_path> \
+      --feat_path <train_SSD_feat_path> \
+      --vox_path_valid <train_event_voxels_path> \
+      --feat_path_valid <test_SSD_feat_path> \
+      --out_path logs/ \
+      --vox_clip -3.06 3.02 \
+      --feat_clip -0 5.27 \
+      --dct_min datasets/dct_min.npy \
+      --dct_max datasets/dct_max.npy \
+      --batch_size 32 \
+      --epochs 100 \
+      --init_lr 0.0001 \
+      --gpu_id 0 \
+      --n_workers 4
+    ```
+
+  For usage instructions, run `python train_E_FPN.py --help`.
+
+- ### Testing
+  Use the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCmFLuvjcT_SJyhmdnvHdVHAZeaz390WAU7tOtn1WIQrnk?e=Ny8GT9) (placed inside [weights](https://github.com/engrchrishenry/E2SIFT/tree/main/weights) folder) and the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) (placed inside [datasets](https://github.com/engrchrishenry/E2SIFT/tree/main/datasets) folder) to reproduce results from Table 1 in E2SIFT. Run the following:
+
+  
 
 
 

@@ -49,7 +49,7 @@ def run_demo(cfg, ckpt, score_threshold, images_dir, feats_dir, output_dir):
         # image_name = f"{image_path.split('/')[-2]}_{image_path.split('/')[-1]}"
         # image_name, image_ext = os.path.splitext(image_name)
 
-        feat = np.load(f'{feats_dir}/{image_name}.npz')['patch']
+        feat = np.load(f'{feats_dir}/{image_name}.npz')['arr_0'] # ['patch']
         feat = torch.from_numpy(feat).unsqueeze(0)
         feat = torch.clamp(feat, min=0.0)
 

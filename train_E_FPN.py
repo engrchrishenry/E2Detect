@@ -113,7 +113,7 @@ def train(epoch):
         total_loss += loss.item()
         running_cos_loss += cos_loss_value.item()
 
-        scheduler.step()
+        # scheduler.step()
 
         n_iter = (epoch - 1) * len(train_loader) + batch_index + 1
 
@@ -128,7 +128,7 @@ def train(epoch):
 
         # update training loss for each iteration
         writer.add_scalar('Train Loss/Cosine (iteration)', loss.item(), n_iter)
-        writer.add_scalar('LR/iteration', optimizer.param_groups[0]['lr'], n_iter)
+        # writer.add_scalar('LR/iteration', optimizer.param_groups[0]['lr'], n_iter)
 
     writer.add_figure('preds',
                         plot_preds(outputs, feats),
@@ -202,25 +202,25 @@ def eval_training(epoch=0):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Training script for E-FPN for SSD backbone feature recovery")
-    parser.add_argument("--vox_path", type=str, nargs="+",
+    parser.add_argument("--vox_path", type=str, nargs="+", required=True,
                         help="One or more paths to directories containing training voxel .npz files")
-    parser.add_argument("--feat_path", type=str, nargs="+",
+    parser.add_argument("--feat_path", type=str, nargs="+", required=True,
                         help="One or more paths to directories containing training SSD backbone feature .npz files")
-    parser.add_argument("--vox_path_valid", type=str, nargs="+",
+    parser.add_argument("--vox_path_valid", type=str, nargs="+", required=True,
                         help="One or more paths to directories containing validation voxel .npz files")
-    parser.add_argument("--feat_path_valid", type=str, nargs="+",
+    parser.add_argument("--feat_path_valid", type=str, nargs="+", required=True,
                         help="One or more paths to directories containing validation SSD backbone feature .npz files")
     parser.add_argument("--out_path", type=str, default='./logs/',
                         help='Path to output logs')
-    parser.add_argument("--vox_clip", type=float, nargs=2, metavar=('min', 'max'),
+    parser.add_argument("--vox_clip", type=float, nargs=2, metavar=('min', 'max'), required=True,
                         help='Min and max clipping value for event voxels')
-    parser.add_argument("--feat_clip", type=float, nargs=2, metavar=('min', 'max'),
+    parser.add_argument("--feat_clip", type=float, nargs=2, metavar=('min', 'max'), default=None,
                         help='Min and max clipping value for SSD backbone feature')
-    parser.add_argument("--dct_min", type=str, 
+    parser.add_argument("--dct_min", type=str, required=True,
                         help='Path to dct_min.npy (generated via get_dct_min_max.py)')
-    parser.add_argument("--dct_max", type=str, 
+    parser.add_argument("--dct_max", type=str, required=True,
                         help='Path to dct_max.npy (generated via get_dct_min_max.py)')
-    parser.add_argument("--batch_size", type=int, default=16,
+    parser.add_argument("--batch_size", type=int, default=32,
                         help="Batch size")
     parser.add_argument("--epochs", type=int, default=100,
                         help="Number of epochs")
@@ -239,10 +239,10 @@ if __name__ == '__main__':
     
     print("\nloading dataset ...")
     train_data_load = Event_to_SSDFeature_Dataset(args.vox_path, args.feat_path, args.vox_clip, args.feat_clip, 'sigmoid')
-    train_loader = torch.utils.data.DataLoader(train_data_load, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
+    train_loader = torch.utils.data.DataLoader(train_data_load, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, pin_memory=True)
     print(f"Iteration per epoch: {len(train_loader)}")
     valid_data_load = Event_to_SSDFeature_Dataset(args.vox_path_valid, args.feat_path_valid, args.vox_clip, args.feat_clip, 'sigmoid')
-    valid_loader = torch.utils.data.DataLoader(valid_data_load, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
+    valid_loader = torch.utils.data.DataLoader(valid_data_load, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers, pin_memory=True)
     print("Validation set samples: ", len(valid_loader))
 
     model = E_FPN(args.dct_min, args.dct_max)
@@ -255,8 +255,9 @@ if __name__ == '__main__':
     
     optimizer = optim.Adam(model.parameters(), lr=args.init_lr, betas=(0.9, 0.999))
 
-    total_steps = args.epochs * len(train_loader)
-    scheduler = CosineAnnealingLR(optimizer, T_max=total_steps, eta_min=1e-6)
+    # total_steps = args.epochs * len(train_loader)
+    # scheduler = CosineAnnealingLR(optimizer, T_max=total_steps, eta_min=1e-6)
+    scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
 
     # output path
     DATE_FORMAT = '%A_%d_%B_%Y_%Hh_%Mm_%Ss'
@@ -277,6 +278,7 @@ if __name__ == '__main__':
     for epoch in range(1, args.epochs + 1):
         train(epoch)
         loss = eval_training(epoch)
+        scheduler.step()
 
         print('saving weights.')
 

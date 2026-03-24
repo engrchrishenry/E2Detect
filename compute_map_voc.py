@@ -25,10 +25,10 @@ def filter_class(dets, class_ids):
 if __name__ == '__main__':
     # ---- Load detections ----
     baseline = torch.load("/storage4tb/PycharmProjects/rpg_e2vid/output/updated/esim_reds_filtered_patched/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth")   # RGB-based SSD detections
-    tsfnet   = torch.load("det_cos_normed/detections_from_feats.pth")   # TSFNet feature-based detections
+    tsfnet   = torch.load("output/det_cos_normed/detections_from_feats.pth")   # TSFNet feature-based detections
     # tsfnet   = torch.load("/storage4tb/PycharmProjects/rpg_e2vid/output/updated/esim_reds_filtered_patched/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth")   # RGB-based SSD detections
     out_dir = 'demo/'
-    out_f_name = 'map_mse_cos_normed.txt'
+    out_f_name = 'map_cos_normed.txt'
     use_07_metric = True # True False
     selected_ids = [15] # [15] # [15, 4, 7]
     

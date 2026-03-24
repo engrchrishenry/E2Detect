@@ -55,7 +55,10 @@ class Event_to_SSDFeature_Dataset(torch.utils.data.Dataset):
             for file in glob.glob(os.path.join(path, "*.npz"), recursive=True)
         )
         self.clip_min_vox, self.clip_max_vox = clip_vox[0], clip_vox[1]
-        self.clip_min_ssd_feat, self.clip_max_ssd_feat = clip_ssd_feat[0], clip_ssd_feat[1]
+        if clip_ssd_feat is not None:
+            self.clip_min_ssd_feat, self.clip_max_ssd_feat = clip_ssd_feat
+        else:
+            self.clip_min_ssd_feat, self.clip_max_ssd_feat = None, None
         self.activation = activation
 
     def __len__(self):
