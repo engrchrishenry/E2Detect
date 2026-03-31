@@ -4,3 +4,4 @@ logs/
 REDS_120fps/
 datasets/
 weights/
+e2detect_processed_data_patches/

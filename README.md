@@ -50,6 +50,10 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
      ```
   4. For running MATLAB scripts, you are required to install [VLFeat](https://www.vlfeat.org/download.html).
 
+## Download Links
+- [Precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG) (as used in the E2Detect paper)
+- [Pre-trained weights](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQBioWfDDah-RYhP4_UxbAR7Afau96q5_3Vp-qzuSAiu8sA?e=Yza3in)
+
 ## Dataset Preparation from Scratch
 
 ### Download [REDS 120fps](https://seungjunnah.github.io/Datasets/reds.html)
@@ -193,22 +197,21 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --output_dir <validation_gt_feat_output_path>
   ```
 
-> Note: The download links for the weights and the code for SSD were taken from [Luffic's SSD repository](https://github.com/lufficc/SSD?tab=readme-ov-file), which is licensed under the MIT License. 
+> Note: The download links for the weights and the code for SSD were taken/modified from [Luffic's SSD repository](https://github.com/lufficc/SSD?tab=readme-ov-file), which is licensed under the MIT License. 
 
 
 ## Event Feature Pyramid Network (E-FPN) (Training/Testing)
 
 - ### Training
-  To train using [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) and using the same parameters as in E2Detect paper, run the following:
+  To train using [precomputed datasets](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQDeRuf3mEdfS57IjLFIBU-hAdwEB-Q94AsmyDim1bYuwms?e=HeZhI8) (placed inside [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder) and using the same parameters as used in E2Detect paper, run the following:
 
     ```bash
-    python train_E_FPN.py --vox_path <train_event_voxels_path> \
-      --feat_path <train_SSD_feat_path> \
-      --vox_path_valid <train_event_voxels_path> \
-      --feat_path_valid <test_SSD_feat_path> \
+    python train_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/vox \
+      --feat_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+      --vox_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+      --feat_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
       --out_path logs/ \
       --vox_clip -3.06 3.02 \
-      --feat_clip -0 5.27 \
       --dct_min datasets/dct_min.npy \
       --dct_max datasets/dct_max.npy \
       --batch_size 32 \
@@ -221,10 +224,68 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
   For usage instructions, run `python train_E_FPN.py --help`.
 
 - ### Testing
-  Use the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCmFLuvjcT_SJyhmdnvHdVHAZeaz390WAU7tOtn1WIQrnk?e=Ny8GT9) (placed inside [weights](https://github.com/engrchrishenry/E2SIFT/tree/main/weights) folder) and the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) (placed inside [datasets](https://github.com/engrchrishenry/E2SIFT/tree/main/datasets) folder) to reproduce results from Table 1 in E2SIFT. Run the following:
+  Use the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQBioWfDDah-RYhP4_UxbAR7Afau96q5_3Vp-qzuSAiu8sA?e=Yza3in) (placed inside [weights](https://github.com/engrchrishenry/E2Detect/tree/main/weights) folder) and the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG) (placed inside [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder) to reproduce results from the E2Detect paper. Run the following:
 
+  ```bash
+    python test_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+      --feat_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+      --weights weights/e2detect_weights.pth \
+      --out_path output/predictions_E_FPN/ \
+      --dct_min datasets/dct_min.npy \
+      --dct_max datasets/dct_min.npy \
+      --vox_clip -3.06 3.02 \
+      --batch_size 32 \
+      --n_workers 4
+  ```
+
+    For usage instructions, run `python test_E_FPN.py --help`.
+
+## Object Detection from Event Camera
+
+Run the following to use the predicted SSD features to detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner.
+
+```bash
+  python get_detections_from_pred_feat.py --config configs/config_SSD.yaml \
+  --ckpt weights/vgg_ssd300_voc0712.pth \
+  --images_dir datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/images \
+  --feats_dir output/predictions_E_FPN/pred_feat \
+  --output_dir output/detections_from_pred_feat/
+```
+
+## Citation
+
+Citation to be provided soon.
+
+<!--
+If you use this code, please cite:
+
+```bibtex
+@INPROCEEDINGS{10647465,
+  author={Henry, Chris and Maharjan, Paras and Li, Zhu and York, George},
+  booktitle={2024 IEEE International Conference on Image Processing (ICIP)}, 
+  title={E2SIFT: Neuromorphic SIFT via Direct Feature Pyramid Recovery from Events}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={2786-2792},
+  keywords={Thresholding (Imaging);Neuromorphics;Detectors;Transforms;Streaming media;Vision sensors;Cameras;neuromorphic vision sensor;event camera;scale-invariant feature transform;SIFT;keypoint detection},
+  doi={10.1109/ICIP51287.2024.10647465}}
+
+```
+-->
   
+## Acknowledgements
 
+This work was partially supported by the National Science Foundation (NSF) under Award 2148382.
+
+- [TSF-Net](ieeexplore.ieee.org/document/10275101/) model implementation was adapted from: https://github.com/parasmaharjan/TSFNet  
+- Some parts of the event data processing were adapted from: https://github.com/uzh-rpg/rpg_e2vid
+- The code for [SSD](https://arxiv.org/abs/1512.02325) were taken/modified from [Luffic's SSD repository](https://github.com/lufficc/SSD?tab=readme-ov-file), which is licensed under the MIT License.
+
+We gratefully acknowledge the authors and contributors for making their work publicly available.
+
+## Contact
+If you have questions or issues regarding the code, feel free to contact: chffn@umsystem.edu or engr.chrishenry@gmail.com
 
 
 

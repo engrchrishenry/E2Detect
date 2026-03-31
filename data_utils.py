@@ -70,8 +70,8 @@ class Event_to_SSDFeature_Dataset(torch.utils.data.Dataset):
         name = os.path.basename(ssd_feat_path)
         name, ext = os.path.splitext(name) 
         
-        vox = np.load(vox_path)['patch']
-        ssd_feat = np.load(ssd_feat_path)['backbone_feature']
+        vox = np.load(vox_path)['arr_0']
+        ssd_feat = np.load(ssd_feat_path)['arr_0']
 
         vox = norm_vox_e2vid(torch.from_numpy(vox))
         vox = vox.cpu().numpy()
