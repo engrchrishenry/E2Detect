@@ -1,7 +1,7 @@
 # E2Detect: Object Detection from Event Camera via Sparse Feature Pyramid Recovery
 This is the official PyTorch implementation of the IEEE ISCAS 2026 paper titled "[E2Detect: Object Detection from Event Camera via Sparse Feature Pyramid Recovery]()".
 
-E2Detect is a framework for object detection from event cameras by recovering dense feature pyramids from sparse event representations. The recovered features are directly compatible with pretrained detectors (e.g., SSD), enabling plug-and-play inference without retraining detection heads.
+E2Detect is a framework for object detection from event cameras by recovering dense feature pyramids from sparse event representations. The recovered features are directly compatible with pretrained detectors like [SSD]("https://arxiv.org/abs/1512.02325), enabling plug-and-play inference without retraining detection heads.
 
 **Highlights:**
 - Recovers dense feature pyramids directly from sparse event voxels  
