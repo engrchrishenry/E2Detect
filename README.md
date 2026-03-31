@@ -110,7 +110,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --batch_size 32 \
     --n_workers 4
   ```
-- Detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner using the predicted SSd features.
+- Detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner using the predicted SSD features.
 
   ```bash
   python get_detections_from_pred_feat.py --config configs/config_SSD.yaml \
