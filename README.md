@@ -56,58 +56,57 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 ## Quick Start
 
-- Complete the steps in the [Installation](#installation) section to set up the environment and dependencies.
-- Create directories.
-  ```bash
-  mkdir datasets weights
-  ```
-  
-- Download and place the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) inside the [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder in the parent directory.
+- Complete the steps in the [Installation](#installation) section to set up the environment and dependencies.  
+- Download and place the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG) inside the [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder.
   
   ```bash
-  # Unzip Event Camera Dataset sequences
-  unzip datasets/ecd.zip -d datasets
-
-  # Unzip Vimeo-90K Dataset (ESIM-generated)
-  unzip datasets/vimeo_90k_esim.zip -d datasets
+  unzip datasets/e2detect_processed_data_patches.zip -d datasets
   ```
-- Download and place the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCmFLuvjcT_SJyhmdnvHdVHAZeaz390WAU7tOtn1WIQrnk?e=Ny8GT9) inside the [weights](https://github.com/engrchrishenry/E2Detect/tree/main/weights) folder in the parent directory.
-- Train network for LoG pyramid recovery
+- Download and place the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQBioWfDDah-RYhP4_UxbAR7Afau96q5_3Vp-qzuSAiu8sA?e=Yza3in) inside the [weights](https://github.com/engrchrishenry/E2Detect/tree/main/weights) folder.
+- Train E-FPN for SSD backbone feature recovery
   ```bash
-  python train.py --vox_path datasets/ecd/train/vox datasets/vimeo_90k_esim/train/vox \
-    --log_path datasets/ecd/train/log datasets/vimeo_90k_esim/train/log \
-    --vox_path_valid datasets/ecd/test_all/vox \
-    --log_path_valid datasets/ecd/test_all/log \
+  python train_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+    --vox_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
     --out_path logs/ \
+    --vox_clip -3.06 3.02 \
     --dct_min datasets/dct_min.npy \
     --dct_max datasets/dct_max.npy \
-    --vox_clip -2.5 2.5 \
-    --log_clip -0.2 0.2 \
     --batch_size 32 \
-    --epochs 200 \
+    --epochs 100 \
     --init_lr 0.0001 \
     --gpu_id 0 \
     --n_workers 4
   ```
-- Test network for LoG pyramid recovery
+- Test E-FPN for SSD backbone feature recovery
   ```bash
-  python test.py --vox_path datasets/ecd/test_per_seq/boxes_6dof/vox \
-    --log_path datasets/ecd/test_per_seq/boxes_6dof/log \
-    --weights weights/e2sift_weights.pth \
-    --out_path output/pred/boxes_6dof/ \
+  python test_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+    --weights weights/e2detect_weights.pth \
+    --out_path output/predictions_E_FPN/ \
     --dct_min datasets/dct_min.npy \
-    --dct_max datasets/dct_max.npy \
-    --vox_clip -2.5 2.5 \
-    --log_clip -0.2 0.2 \
+    --dct_max datasets/dct_min.npy \
+    --vox_clip -3.06 3.02 \
     --batch_size 32 \
-    --n_workers 4 \
-    --plot
+    --n_workers 4
   ```
-  The command above tests on the `boxes_6dof` sequence. Update `--vox_path`, `--log_path`, and `--out_path` for testing on other sequences.
-- Compute matching accuracy for SIFT keypoints detected via ground truth LoG and predicted LoG pyramid
+- Detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner using the predicted SSd features.
 
-  - Run [gt_vs_pred_log_sift.m](https://github.com/engrchrishenry/E2SIFT/blob/main/neuromorphic_sift/gt_vs_pred_log_sift.m) after modifying the paths and parameters (if needed).
-  - Run [gt_vs_pred_log_sift.m](https://github.com/engrchrishenry/E2SIFT/blob/main/neuromorphic_sift/gt_vs_pred_log_sift.m) separately for each sequence in `ecd/test_per_seq` to reproduce results from Table 2 in E2SIFT paper.
+  ```bash
+  python get_detections_from_pred_feat.py --config configs/config_SSD.yaml \
+    --ckpt weights/vgg_ssd300_voc0712.pth \
+    --images_dir datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/images \
+    --feats_dir output/predictions_E_FPN/pred_feat \
+    --output_dir output/detections_from_pred_feat/
+  ```
+- Compute mAP score
+
+  ```bash
+  python compute_map_score.py --baseline datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth \
+    --e_fpn output/detections_from_pred_feat/detections_from_feats.pth \
+    --selected_ids 15
+  ```
 
 ## Dataset Preparation from Scratch
 
