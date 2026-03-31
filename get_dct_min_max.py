@@ -31,15 +31,15 @@ def dct_and_rearrange(in_pix):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Get min and max for DCT normalization in TSFNet_E2SIFT model')
+    parser = argparse.ArgumentParser(description='Get min and max for DCT normalization in E-FPN model')
     parser.add_argument('--data_dir', type=str, required=True,
                         help='Path to the directory containing event voxels')
     parser.add_argument("--vox_clip", type=float, nargs=2, metavar=('min', 'max'), required=True,
                         help='Min and max clipping value for event voxels')
     parser.add_argument('--num_voxels', type=int, required=True,
                         help='Number of event voxels to process')
-    parser.add_argument('--model_ip_size', type=str, default='160:160',
-                        help="Input size w:h for the model TSFNet_E2SIFT (e.g., '160:160')")
+    parser.add_argument('--model_ip_size', type=str, default='300:300',
+                        help="Input size w:h for the model E-FPN (e.g., '300:300')")
     parser.add_argument('--out_path', type=str, default='output/dct_norm',
                         help='Path to the output directory')
     

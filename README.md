@@ -205,21 +205,21 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 - ### Training
   To train using [precomputed datasets](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQDeRuf3mEdfS57IjLFIBU-hAdwEB-Q94AsmyDim1bYuwms?e=HeZhI8) (placed inside [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder) and using the same parameters as used in E2Detect paper, run the following:
 
-    ```bash
-    python train_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/vox \
-      --feat_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
-      --vox_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
-      --feat_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
-      --out_path logs/ \
-      --vox_clip -3.06 3.02 \
-      --dct_min datasets/dct_min.npy \
-      --dct_max datasets/dct_max.npy \
-      --batch_size 32 \
-      --epochs 100 \
-      --init_lr 0.0001 \
-      --gpu_id 0 \
-      --n_workers 4
-    ```
+  ```bash
+  python train_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path datasets/e2detect_processed_data_patches/train/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+    --vox_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path_valid datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+    --out_path logs/ \
+    --vox_clip -3.06 3.02 \
+    --dct_min datasets/dct_min.npy \
+    --dct_max datasets/dct_max.npy \
+    --batch_size 32 \
+    --epochs 100 \
+    --init_lr 0.0001 \
+    --gpu_id 0 \
+    --n_workers 4
+  ```
 
   For usage instructions, run `python train_E_FPN.py --help`.
 
@@ -227,30 +227,47 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
   Use the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:u:/g/personal/chffn_umsystem_edu/IQBioWfDDah-RYhP4_UxbAR7Afau96q5_3Vp-qzuSAiu8sA?e=Yza3in) (placed inside [weights](https://github.com/engrchrishenry/E2Detect/tree/main/weights) folder) and the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG) (placed inside [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder) to reproduce results from the E2Detect paper. Run the following:
 
   ```bash
-    python test_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
-      --feat_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
-      --weights weights/e2detect_weights.pth \
-      --out_path output/predictions_E_FPN/ \
-      --dct_min datasets/dct_min.npy \
-      --dct_max datasets/dct_min.npy \
-      --vox_clip -3.06 3.02 \
-      --batch_size 32 \
-      --n_workers 4
+  python test_E_FPN.py --vox_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/vox \
+    --feat_path datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/ssd_feat_normed \
+    --weights weights/e2detect_weights.pth \
+    --out_path output/predictions_E_FPN/ \
+    --dct_min datasets/dct_min.npy \
+    --dct_max datasets/dct_min.npy \
+    --vox_clip -3.06 3.02 \
+    --batch_size 32 \
+    --n_workers 4
   ```
 
     For usage instructions, run `python test_E_FPN.py --help`.
+  
+- **Note:** If you prepared the dataset from scratch, you should recompute `--vox_clip` and `--dct_min`/`--dct_max` values for use during training and testing:
+
+  ```bash
+  # Event voxel clipping value (--vox_clip)
+  python get_vox_log_clip_thresh.py --data_path <event_voxels_path> \
+    --save_file output/hists/vox_hist.png \
+    --samp_percent 5 \
+    --hist_pctl 99.9
+
+  # DCT normalization values (--dct_min/--dct_max)
+  python get_dct_min_max.py --data_dir <event_voxels_path> \
+    --vox_clip <vox_min> <vox_max> \
+    --num_voxels 4000 \
+    --model_ip_size 300:300 \
+    --out_path output/dct_norm
+  ```
 
 ## Object Detection from Event Camera
 
-Run the following to use the predicted SSD features to detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner.
+- Run the following to use the predicted SSD features to detect objects via [SSD](https://arxiv.org/abs/1512.02325) in a plug-n-play manner.
 
-```bash
+  ```bash
   python get_detections_from_pred_feat.py --config configs/config_SSD.yaml \
-  --ckpt weights/vgg_ssd300_voc0712.pth \
-  --images_dir datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/images \
-  --feats_dir output/predictions_E_FPN/pred_feat \
-  --output_dir output/detections_from_pred_feat/
-```
+    --ckpt weights/vgg_ssd300_voc0712.pth \
+    --images_dir datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/images \
+    --feats_dir output/predictions_E_FPN/pred_feat \
+    --output_dir output/detections_from_pred_feat/
+  ```
 
 ## Citation
 
