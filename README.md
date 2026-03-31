@@ -299,7 +299,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --weights weights/e2detect_weights.pth \
     --out_path output/predictions_E_FPN/ \
     --dct_min datasets/dct_min.npy \
-    --dct_max datasets/dct_min.npy \
+    --dct_max datasets/dct_max.npy \
     --vox_clip -3.06 3.02 \
     --batch_size 32 \
     --n_workers 4
