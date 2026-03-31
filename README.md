@@ -269,6 +269,16 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --output_dir output/detections_from_pred_feat/
   ```
 
+  - Compute mAP score
+
+  ```bash
+  python compute_map_score.py --baseline datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth \
+    --e_fpn output/detections_from_pred_feat/detections_from_feats.pth \
+    --selected_ids 15
+  ```
+
+
+
 ## Citation
 
 Citation to be provided soon.
