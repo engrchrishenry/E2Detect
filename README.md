@@ -17,6 +17,17 @@ This is the official pytorch implementation of the upcoming IEEE ISCAS 2026 pape
 
 <br>
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Download Links](#download-links)
+- [Quick Start](#quick-start)
+- [Dataset Preparation from Scratch](#dataset-preparation-from-scratch)
+- [Event Feature Pyramid Network (E-FPN) (Training/Testing)](#event-feature-pyramid-network-e-fpn-trainingtesting)
+- [Object Detection from Event Camera](#object-detection-from-event-camera)
+- [Citation](#citation)
+- [Acknowledgements](#acknowledgements)
+- [Contact](#contact)
 
 ## Prerequisites
 The code was tested on Linux with the following prerequisites:
