@@ -100,7 +100,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --feats_dir output/predictions_E_FPN/pred_feat \
     --output_dir output/detections_from_pred_feat/
   ```
-- Compute mAP score
+- Compute mAP score for *person* class.
 
   ```bash
   python compute_map_score.py --baseline datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth \
@@ -323,7 +323,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
     --output_dir output/detections_from_pred_feat/
   ```
 
-- Compute mAP score
+- Compute mAP score for *person* class.
 
   ```bash
   python compute_map_score.py --baseline datasets/e2detect_processed_data_patches/val/5_0.55_0.005_50_70000_300000/detections_from_images.pth \
