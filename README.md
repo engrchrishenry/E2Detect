@@ -62,7 +62,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
   mkdir datasets weights
   ```
   
-- Download and place the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) inside the `datasets` folder in the parent directory.
+- Download and place the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCvKBoXFMn0Rb_Lo3yjXsKTASQbyxG3cxb9zsOKYhr3GD0?e=oRzZqa) inside the [datasets](https://github.com/engrchrishenry/E2Detect/tree/main/datasets) folder in the parent directory.
   
   ```bash
   # Unzip Event Camera Dataset sequences
@@ -71,7 +71,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
   # Unzip Vimeo-90K Dataset (ESIM-generated)
   unzip datasets/vimeo_90k_esim.zip -d datasets
   ```
-- Download and place the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCmFLuvjcT_SJyhmdnvHdVHAZeaz390WAU7tOtn1WIQrnk?e=Ny8GT9) inside the `weights` folder in the parent directory.
+- Download and place the [pre-trained weights](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgCmFLuvjcT_SJyhmdnvHdVHAZeaz390WAU7tOtn1WIQrnk?e=Ny8GT9) inside the [weights](https://github.com/engrchrishenry/E2Detect/tree/main/weights) folder in the parent directory.
 - Train network for LoG pyramid recovery
   ```bash
   python train.py --vox_path datasets/ecd/train/vox datasets/vimeo_90k_esim/train/vox \
