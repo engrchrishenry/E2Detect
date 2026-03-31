@@ -2,6 +2,6 @@ __pycache__/
 output/
 logs/
 REDS_120fps/
-datasets/
-weights/
 e2detect_processed_data_patches/
+vgg_ssd300_voc0712.pth
+vgg16_reducedfc.pth
