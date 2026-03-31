@@ -129,7 +129,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 ## Dataset Preparation from Scratch
 
-> ⚠️ This section is only required if you want to reproduce the dataset from scratch. For most users, please use the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG).
+> ⚠️ This section is only required if you want to reproduce the dataset from scratch. Most users can skip this section and use the [precomputed datasets](https://mailmissouri-my.sharepoint.com/:f:/g/personal/chffn_umsystem_edu/IgD5Rw3HYmxPR5NcrudGi-cuAbzlo9fz-r1FWxn0uAbV_L4?e=NMf0RG).
 
 ### Download [REDS 120fps](https://seungjunnah.github.io/Datasets/reds.html)
 
