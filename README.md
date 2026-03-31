@@ -9,13 +9,13 @@ E2Detect is a framework for object detection from event cameras by recovering de
   <img src="figures/overview_e2detect.jpg" alt="Overview E2Detect" width="590"/>
   <br>
   Overall pipeline for the proposed E2Detect system.
-</div>
+<!-- </div> -->
 
 <p align="center">
   <img src="figures/e2detect_predictions.jpg" alt="E2Detect Predictions" width="590"/>
   <br>
   Detections by E2Detect (ours) using event voxel and detections via passing RGB image through pretrained <a href="https://arxiv.org/abs/1512.02325">SSD</a>.
-</div>
+<!-- </div> -->
 
 <br>
 
