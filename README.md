@@ -62,7 +62,7 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 - Install dependencies
   1. Install [PyTorch](https://pytorch.org/get-started/locally/).
-  2. Install [FFmpeg](www.ffmpeg.org/download.html).
+  2. Install [FFmpeg](https://www.ffmpeg.org/download.html).
   3. The remaining packages can be installed via:
      ```bash
      pip install -r requirements.txt
