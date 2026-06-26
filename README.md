@@ -357,8 +357,22 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 Citation to be provided soon.
 
-<!--
 If you use this code, please cite:
+
+```bibtex
+@INPROCEEDINGS{11562756,
+  author={Henry, Chris and Li, Zhu and Katsaggelos, Aggelos K.},
+  booktitle={2026 IEEE International Symposium on Circuits and Systems (ISCAS)}, 
+  title={E2Detect: Object Detection from Event Camera via Sparse Feature Pyramid Recovery}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={957-961},
+  keywords={Object detection;Printing;Conferences;Cameras;Event detection;Computers;Signal detection;Computer vision;Modeling;Detectors},
+  doi={10.1109/ISCAS66217.2026.11562756}}
+```
+
+You may also explore our work on event-based SIFT keypoint detection ([Paper](https://ieeexplore.ieee.org/document/10647465/) | [Code](https://github.com/engrchrishenry/E2SIFT)). Consider citing the following:
 
 ```bibtex
 @INPROCEEDINGS{10647465,
@@ -371,9 +385,7 @@ If you use this code, please cite:
   pages={2786-2792},
   keywords={Thresholding (Imaging);Neuromorphics;Detectors;Transforms;Streaming media;Vision sensors;Cameras;neuromorphic vision sensor;event camera;scale-invariant feature transform;SIFT;keypoint detection},
   doi={10.1109/ICIP51287.2024.10647465}}
-
 ```
--->
   
 ## Acknowledgements
 
