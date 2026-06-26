@@ -370,7 +370,9 @@ If you use this code, please cite:
   doi={10.1109/ISCAS66217.2026.11562756}}
 ```
 
-You may also explore our work on event-based SIFT keypoint detection, please check out our **E2SIFT** project:
+You may also explore our work on event-based SIFT keypoint detection (E2SIFT)  , please check out our **E2SIFT** project:
+
+You may also be interested in our work on event-based SIFT keypoint detection, **E2SIFT** ([Paper](https://ieeexplore.ieee.org/document/10647465/) | [Code](https://github.com/engrchrishenry/E2SIFT)). If you use E2SIFT in your research, please consider citing:
 
 - **Paper:** https://ieeexplore.ieee.org/document/10647465/
 - **Code:** https://github.com/engrchrishenry/E2SIFT
