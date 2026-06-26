@@ -370,9 +370,7 @@ If you use this code, please cite:
   doi={10.1109/ISCAS66217.2026.11562756}}
 ```
 
-You may also explore our work on event-based SIFT keypoint detection, **E2SIFT** ([Paper](https://ieeexplore.ieee.org/document/10647465/) | [Code](https://github.com/engrchrishenry/E2SIFT)). If you use E2SIFT in your research, please consider citing:
-
-You may also explore our earlier work, **E2SIFT: Neuromorphic SIFT via Direct Feature Pyramid Recovery from Events** ([Paper](https://ieeexplore.ieee.org/document/10647465/) | [Code](https://github.com/engrchrishenry/E2SIFT)). If you use E2SIFT, please cite:
+You may also explore our work on event-based SIFT keypoint detection, **E2SIFT** ([Paper](https://ieeexplore.ieee.org/document/10647465/) | [Code](https://github.com/engrchrishenry/E2SIFT)). If you use E2SIFT, please consider citing:
 
 ```bibtex
 @INPROCEEDINGS{10647465,
