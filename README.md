@@ -355,8 +355,6 @@ Remaining libraries are available in [requirements.txt](https://github.com/engrc
 
 ## Citation
 
-Citation to be provided soon.
-
 If you use this code, please cite:
 
 ```bibtex
